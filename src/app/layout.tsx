@@ -1,6 +1,7 @@
 "use client"
 import { Provider } from 'react-redux';
 import store from '../store/store';
+import Script from 'next/script';
 // import '../styles/globals.css';
 
 
@@ -19,23 +20,18 @@ export default function RootLayout({
       </head>
       <body>
       <Provider store={store}>
-      <div className="lg:flex">
+      <div className="lg:flex h-screen">
         {children}
         </div>
       </Provider>
-      <script src="assets/libs/jquery/jquery.min.js"></script>
-      <script src="assets/libs/%40popperjs/core/umd/popper.min.js"></script>
-      {/* //fix */}
-
-      <script src="assets/libs/simplebar/simplebar.min.js"></script>
-      <script src="assets/libs/magnific-popup/jquery.magnific-popup.min.js"></script>
-      <script src="assets/libs/owl.carousel/owl.carousel.min.js"></script>
-      {/* //fix */}
-
-      <script src="assets/js/pages/index.init.js"></script>
-      <script src="assets/js/pages/profile.init.js"></script>
-      {/* //fix */}
-      <script src="assets/js/app.js"></script>
+      <Script src="assets/libs/jquery/jquery.min.js" strategy="beforeInteractive" />
+        <Script src="assets/libs/%40popperjs/core/umd/popper.min.js" strategy="afterInteractive" />
+        <Script src="assets/libs/simplebar/simplebar.min.js" strategy="afterInteractive" />
+        <Script src="assets/libs/magnific-popup/jquery.magnific-popup.min.js" strategy="afterInteractive" />
+        <Script src="assets/libs/owl.carousel/owl.carousel.min.js" strategy="afterInteractive" />
+        <Script src="assets/js/pages/index.init.js" strategy="afterInteractive" />
+        <Script src="assets/js/pages/profile.init.js" strategy="afterInteractive" />
+        <Script src="assets/js/app.js" strategy="afterInteractive" />
       </body>
     </html>
   );

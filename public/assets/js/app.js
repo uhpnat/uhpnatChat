@@ -306,17 +306,17 @@ document.querySelectorAll("#style-switcher li").forEach(function (item) {
 
 // right sidebar tabs
 
-const toggleBtn = document.getElementById('toggleButton');
-const content = document.getElementById('content');
-const profileSidebar = document.querySelector('.user-profile-sidebar');
+// const toggleBtn = document.getElementById('toggleButton');
+// const content = document.getElementById('content');
+// const profileSidebar = document.querySelector('.user-profile-sidebar');
 
-toggleBtn.addEventListener('click', function () {
-  if (content.style.display === 'none') {
-    content.style.display = 'block';
-  } else {
-    content.style.display = 'none';
-  }
-});
+// toggleBtn.addEventListener('click', function () {
+//   if (content.style.display === 'none') {
+//     content.style.display = 'block';
+//   } else {
+//     content.style.display = 'none';
+//   }
+// });
 
 var profileTabBtn = document.querySelectorAll('.profileTab');
 if (profileTabBtn) {
