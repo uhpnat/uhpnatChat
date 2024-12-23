@@ -1,7 +1,28 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
+import MessageList from './MessageList';
 
-export default function UserChat() {
+export default function UserChat({data}:any) {
+
+    const messages = [
+        {
+            id: 1,
+            name: 'Nguyễn Văn A',
+            avatar: 'https://i.pinimg.com/736x/03/eb/d6/03ebd625cc0b9d636256ecc44c0ea324.jpg',
+            text: '?',
+            time: '10:02',
+            isSender: false,
+        },
+        {
+            id: 2,
+            name: 'Võ Tấn Phú',
+            avatar: 'https://i.pinimg.com/736x/03/eb/d6/03ebd625cc0b9d636256ecc44c0ea324.jpg',
+            text: 'Good morning, How are you? What about our next meeting?',
+            time: '10:02',
+            isSender: true,
+        },
+    ];
     return (
         <div className="w-full overflow-hidden transition-all duration-150 bg-white user-chat dark:bg-zinc-800">
             <div className="lg:flex">
@@ -12,13 +33,13 @@ export default function UserChat() {
                             <div className="col-span-8 sm:col-span-4">
                                 <div className="flex items-center">
                                     <div className="block mr-2 rtl:ml-2 lg:hidden">
-                                        <a href="javascript: void(0);" className="p-2 text-gray-500 user-chat-remove text-16"><i className="ri-arrow-left-s-line"></i></a>
+                                        <Link href="" className="p-2 text-gray-500 user-chat-remove text-16"><i className="ri-arrow-left-s-line"></i></Link>
                                     </div>
                                     <div className="rtl:ml-3 mr-3">
-                                        <Image width={20} height={20} src="https://i.pinimg.com/736x/03/eb/d6/03ebd625cc0b9d636256ecc44c0ea324.jpg" className="rounded-full h-9 w-9" alt="" />
+                                    {data?.avatar ? ( <Image width={20} height={20} src={data?.avatar} className="rounded-full h-9 w-9" alt="" />) : ""}
                                     </div>
                                     <div className="flex-grow overflow-hidden">
-                                        <h5 className="mb-0 truncate text-16 block rtl:hidden"><a href="#" className="text-gray-800 dark:text-gray-50">Võ Tấn Phú</a> <i className="text-green-500 ml-1 rtl:mr-1 ri-record-circle-fill text-10 "></i></h5>
+                                        <h5 className="mb-0 truncate text-16 block rtl:hidden"><a href="#" className="text-gray-800 dark:text-gray-50">{data?.name}</a> <i className="text-green-500 ml-1 rtl:mr-1 ri-record-circle-fill text-10 "></i></h5>
                                         <h5 className="mb-0 truncate text-16 rtl:block hidden"><i className="text-green-500 ml-1 rtl:mr-1 ri-record-circle-fill text-10 "></i> <a href="#" className="text-gray-800 dark:text-gray-50">Võ Tấn Phú</a></h5>
                                     </div>
                                 </div>
@@ -178,45 +199,7 @@ export default function UserChat() {
                                     <span className="relative bg-gray-50 text-13 py-[6px] px-3 rounded dark:bg-zinc-600 dark:text-gray-50">Hôm nay</span>
                                 </div>
                             </li>
-                            <li className="clear-both py-4">
-                                <div className="flex  gap-3">
-                                    <div>
-                                        <Image width={20} height={20} src="https://i.pinimg.com/736x/03/eb/d6/03ebd625cc0b9d636256ecc44c0ea324.jpg" alt="" className="rounded-full h-9 w-9" />
-                                    </div>
-                                    <div>
-                                        <div className="font-medium text-gray-700 rtl:text-left text-14 dark:text-gray-300">Nguyễn Văn A</div>
-                                        <div className="flex gap-2 mb-2 justify-end rtl:justify-start">
-                                            <div className="relative order-2 px-5 py-3 text-gray-700 rounded-lg rounded-br-none rtl:rounded-bl-none bg-gray-50 dark:bg-zinc-700 dark:text-gray-50">
-                                                <p className="mb-0 break-words">
-                                                    ?
-                                                </p>
-                                                <p className="mt-1 mb-0 text-xs text-left text-gray-500 dark:text-gray-300"><i className="align-middle ri-time-line"></i> <span className="align-middle">10:02</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li className="clear-both py-4">
-                                <div className="flex  gap-3  flex-row-reverse">
-                                    <div>
-                                       <Image width={20} height={20} src="https://i.pinimg.com/736x/03/eb/d6/03ebd625cc0b9d636256ecc44c0ea324.jpg" alt="" className="rounded-full h-9 w-9" />
-                                    </div>
-                                    <div>
-
-                                        <div className="font-medium text-gray-700 text-right text-14 dark:text-gray-300">Võ Tấn Phú</div>
-                                        <div className="flex gap-2 mb-2 ">
-                                            <div className="relative order-2 px-5 py-3 text-gray-700 rounded-lg rounded-br-none rtl:rounded-bl-none bg-gray-50 dark:bg-zinc-700 dark:text-gray-50">
-                                                <p className="mb-0">
-                                                    Good morning, How are you? What about our next meeting?
-                                                </p>
-                                                <p className="mt-1 mb-0 text-xs text-left text-gray-500 dark:text-gray-300"><i className="align-middle ri-time-line"></i> <span className="align-middle">10:02</span></p>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
+                            <MessageList messages={messages} />
                         </ul>
                     </div>
 

@@ -2,7 +2,7 @@ import Image from 'next/image'
 import React from 'react'
 import ListUserChats from './Chats/ListUserChats'
 
-export default function Chats() {
+export default function Chats({children}:any) {
   return (
     <div className="">
     <div>
@@ -77,8 +77,7 @@ export default function Chats() {
         
             </div>
         </div>
-
-        <ListUserChats></ListUserChats>
+        {children}
        
     </div>
 
