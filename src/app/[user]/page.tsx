@@ -7,7 +7,10 @@ import Chats from "@/components/app-chat/item/Chats";
 import ListUserChats from "@/components/app-chat/item/Chats/ListUserChats";
 import UserChats from "@/components/app-chat/item/Chats/UserChats";
 import { useState } from "react";
-export default function Page() {
+import { use } from 'react';
+export default function Page({params}:any) {
+  const user = use(params);
+  console.log(user);
   const users = [
     {
         id: 1,
@@ -17,7 +20,7 @@ export default function Page() {
         avatar: "https://i.pinimg.com/736x/03/eb/d6/03ebd625cc0b9d636256ecc44c0ea324.jpg",
         status: "online",
     },
-    
+  
 ];
 
 const [selectedUser, setSelectedUser] = useState<any>(users[0]);
@@ -31,7 +34,7 @@ const [selectedUser, setSelectedUser] = useState<any>(users[0]);
         </ListUserChats>
         </Chats>
       </ChatLeftsidebar>
-      <UserChat data={selectedUser}></UserChat>
+      <UserChat data={selectedUser} user={user}></UserChat>
 
     </>
   );

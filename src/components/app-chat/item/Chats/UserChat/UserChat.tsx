@@ -1,28 +1,91 @@
+'use client';
+
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { io, Socket } from 'socket.io-client';
+
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
 import MessageList from './MessageList';
 
-export default function UserChat({data}:any) {
 
-    const messages = [
-        {
-            id: 1,
-            name: 'Nguyễn Văn A',
-            avatar: 'https://i.pinimg.com/736x/03/eb/d6/03ebd625cc0b9d636256ecc44c0ea324.jpg',
-            text: '?',
-            time: '10:02',
-            isSender: false,
-        },
-        {
-            id: 2,
-            name: 'Võ Tấn Phú',
-            avatar: 'https://i.pinimg.com/736x/03/eb/d6/03ebd625cc0b9d636256ecc44c0ea324.jpg',
-            text: 'Good morning, How are you? What about our next meeting?',
-            time: '10:02',
-            isSender: true,
-        },
-    ];
+
+export default function UserChat({data ,user}:any) {
+
+  const [messages, setMessages] = useState<any>([]);
+  const [inputMessage, setInputMessage] = useState<string>('');
+  const [sender, setSender] = useState<string>(user?.user);
+  const [receiver, setReceiver] = useState<string>(user?.user == 'admin' ? 'tanphu' : 'admin');
+  const socket = useRef<Socket | null>(null); // Lưu trữ socket instance
+  const isListenerRegistered = useRef(false); // Theo dõi sự kiện đã được đăng ký hay chưa
+
+  useEffect(() => {
+    if (!socket.current) {
+      socket.current = io('http://localhost:3001', {
+        transports: ['websocket'],
+      });
+
+      socket.current.on('connect', () => {
+        console.log('Connected to WebSocket server');
+      });
+
+      // Đảm bảo cleanup khi component unmount
+      return () => {
+        socket.current?.disconnect();
+        socket.current = null;
+        isListenerRegistered.current = false;
+      };
+    }
+  }, []);
+
+  // Tải lịch sử chat
+  useEffect(() => {
+    const fetchChatHistory = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/chats/${sender}/${receiver}`
+        );
+        setMessages(response.data);
+        console.log('Chat history:', response.data);
+      } catch (error) {
+        console.error('Error fetching chat history:', error);
+      }
+    };
+
+    fetchChatHistory();
+  }, [sender, receiver]); // Chỉ gọi lại khi sender hoặc receiver thay đổi
+
+  // Đăng ký sự kiện WebSocket nhận tin nhắn mới
+  useEffect(() => {
+    if (socket.current && !isListenerRegistered.current) {
+      const handleNewMessage = (data: any) => {
+        console.log('New message received:', data);
+        setMessages((prevMessages :any ) => [...prevMessages, data]);
+      };
+
+      socket.current.on('receive_message', handleNewMessage);
+      isListenerRegistered.current = true; // Đánh dấu đã đăng ký
+
+      // Cleanup để xóa sự kiện khi component unmount
+      return () => {
+        socket.current?.off('receive_message', handleNewMessage);
+        isListenerRegistered.current = false; // Đánh dấu chưa đăng ký
+      };
+    }
+  }, [socket.current]); // Đảm bảo chỉ chạy khi socket thay đổi
+
+  // Hàm gửi tin nhắn
+  const handleSendMessage = () => {
+    if (inputMessage.trim() !== '' && socket.current) {
+      socket.current.emit('send_message', { sender, receiver, message: inputMessage });
+      setInputMessage('');
+    }
+  };
+  const bottomRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
     return (
         <div className="w-full overflow-hidden transition-all duration-150 bg-white user-chat dark:bg-zinc-800">
             <div className="lg:flex">
@@ -199,7 +262,8 @@ export default function UserChat({data}:any) {
                                     <span className="relative bg-gray-50 text-13 py-[6px] px-3 rounded dark:bg-zinc-600 dark:text-gray-50">Hôm nay</span>
                                 </div>
                             </li>
-                            <MessageList messages={messages} />
+                            {messages.map((item : any,index :any)=> <MessageList message={item} user={user} key={index}  />)}
+                            <div ref={bottomRef} />
                         </ul>
                     </div>
 
@@ -208,7 +272,12 @@ export default function UserChat({data}:any) {
                         <div className="flex gap-2">
 
                             <div className="flex-grow">
-                                <input type="text" className="w-full border-transparent rounded bg-gray-50 placeholder:text-14 text-14 dark:bg-zinc-700 dark:placeholder:text-gray-300 dark:text-gray-300" placeholder="Enter Message..." />
+                                <input type="text" 
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleSendMessage();
+                                }}
+                                value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)} className="w-full border-transparent rounded bg-gray-50 placeholder:text-14 text-14 dark:bg-zinc-700 dark:placeholder:text-gray-300 dark:text-gray-300" placeholder="Enter Message..." />
                             </div>
                             <div>
                                 <div>
@@ -232,8 +301,8 @@ export default function UserChat({data}:any) {
                                             </button>
                                         </li>
                                         <li className="inline-block">
-                                            <button type="submit" className="text-white border-transparent btn group-data-[theme-color=violet]:bg-violet-500 group-data-[theme-color=green]:bg-green-500 group-data-[theme-color=red]:bg-red-500 group-data-[theme-color=violet]:hover:bg-violet-600 group-data-[theme-color=green]:hover:bg-green-600">
-                                                <i className="ri-send-plane-2-fill"></i>
+                                            <button   onClick={handleSendMessage} className="text-white border-transparent btn group-data-[theme-color=violet]:bg-violet-500 group-data-[theme-color=green]:bg-green-500 group-data-[theme-color=red]:bg-red-500 group-data-[theme-color=violet]:hover:bg-violet-600 group-data-[theme-color=green]:hover:bg-green-600">
+                                                <i className="ri-send-plane-2-fill">Gửi</i>
                                             </button>
                                         </li>
                                     </ul>

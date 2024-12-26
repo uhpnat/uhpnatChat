@@ -2,6 +2,7 @@
 import { Provider } from 'react-redux';
 import store from '../store/store';
 import Script from 'next/script';
+import SidebarMenu from '@/components/layouts/SidebarMenu';
 // import '../styles/globals.css';
 
 
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body>
       <Provider store={store}>
       <div className="lg:flex h-screen">
+         <SidebarMenu></SidebarMenu>
         {children}
         </div>
       </Provider>
